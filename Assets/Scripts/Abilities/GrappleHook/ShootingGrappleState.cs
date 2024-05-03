@@ -5,8 +5,8 @@ using UnityEngine;
 using Control;
 /**
 Author:         Tanner Hunt
-Date:           4/22/2024
-Version:        0.1.0
+Date:           5/2/2024
+Version:        0.1.1
 Description:    How the grapple hook should move in air.  Upon collision, it should 
                 disable the sphere collider and child itself to the collided object,
                 then transfer to the stuck state.  If the player lets go of the 
@@ -22,6 +22,9 @@ ChangeLog:      V 0.1.0 -- 4/22/2024
                     past the max extension distance or the player releases the RMB
                     --NYI: Animation styles for how the grapple hook accelerates
                     --Dev time: dev time is wrapped in the Grapple Hook master class
+                V 0.1.1 -- 5/2/2024
+                    --Movement now implements Time.deltaTime to maintain consistency between
+                    playtesting and builds
 */
 namespace Abilities{
 public class ShootingGrappleState :  IState
@@ -51,7 +54,7 @@ public class ShootingGrappleState :  IState
 /// </summary>
     public void execute(){
         if(Input.GetMouseButton(1) && rb.velocity.magnitude <= owner.terminalHookVelocity){
-            rb.AddForce(forceDirection * owner.hookVelocity);
+            rb.AddForce(forceDirection * owner.hookVelocity * Time.deltaTime);
         }
         if(Vector3.Distance(owner.transform.position, owner.player.transform.GetChild(0).transform.position) > owner.maxHookDistane){
             owner.currentState.changeState(new ReelingGrappleState(owner));

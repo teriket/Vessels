@@ -5,8 +5,8 @@ using UnityEngine;
 
 /**
 Author:         Tanner Hunt
-Date:           4/24/2024
-Version:        0.1.4
+Date:           5/2/2024
+Version:        1.0.0
 Description:    This Code handles camera movements and rotations around the player character.
 ChangeLog:      V 0.1.0 -- 4/16/2024
                     --Added panning around the character in a sphere centered at character.
@@ -33,6 +33,9 @@ ChangeLog:      V 0.1.0 -- 4/16/2024
                     from camera panning
                     --Pausing of camera movement in pan is now done through mouse contexts
                     --Dev time: 0.25 hours
+                V 1.0.0 -- 5/2/2024
+                    --Camera now snaps closer to the player if an object is in the way
+                    --Dev time -- 2 hours
 
 */
 namespace Control{
@@ -53,8 +56,9 @@ public class CameraController : MonoBehaviour
     [SerializeField]float zoomDistance;             //how far the camera should zoom in one scroll;  Updates the arm length
     [SerializeField]int numberOfZoomingFrames = 10; //the number of frames the zooming animation should take
     [SerializeField]float minZoom = 0.01f;          //How close the camera is allowed towards the player
-    [SerializeField]float maxZoom = 10f;            //how far away the camera is allowed from the player
+    [SerializeField]float maxZoom = 100f;            //how far away the camera is allowed from the player
     [SerializeField] AnimationType animationType;   //the way the camera should move towards or away from the player
+    private float tempCameraDistance;
 
     public enum AnimationType{
         linear,
@@ -76,6 +80,7 @@ public class CameraController : MonoBehaviour
 /// at the player.
 /// </summary>
     void LateUpdate(){
+        snapCameraForward();
         Zoom();
         Pan();
         this.transform.LookAt(character.transform);
@@ -102,11 +107,7 @@ public class CameraController : MonoBehaviour
             theta = theta + xpan * panSpeed;
         }
 
-        //update the camera position
-        this.transform.localPosition = new Vector3(
-            (float)Math.Sin(theta) * (float)Math.Sin(phi) * armLength,      //xpos
-            (float)Math.Cos(phi) * armLength,                               //ypos
-            (float)Math.Cos(theta) * (float)Math.Sin(phi) * armLength);     //zpos
+   //zpos
         RenormalizeAngles();
     }
 
@@ -137,8 +138,7 @@ public class CameraController : MonoBehaviour
             coroutine = animateZoom(-direction);
             StartCoroutine(coroutine);
         }
-
-        //draw a backvector so the camera doesn't collide with objects
+        setCameraPosition();
     }
 
 /// <summary>
@@ -255,5 +255,34 @@ public class CameraController : MonoBehaviour
 /// <returns>float value representing the angle against the y-axis</returns>
     public float getPhi(){
         return phi;
+    }
+
+    private void snapCameraForward(){
+        RaycastHit hit;
+        int layerMask = (0b00011); //mask layers 8 and 16
+        Debug.DrawRay(transform.parent.GetChild(0).position, snapCameraRaycastDirection(), Color.red, 1f);
+        if(Physics.Raycast(transform.parent.GetChild(0).position, snapCameraRaycastDirection(), out hit, armLength, layerMask)){
+            print(hit.transform.gameObject);
+            tempCameraDistance = hit.distance;
+            return;
+        }
+        tempCameraDistance = armLength;
+    }
+
+    private Vector3 snapCameraRaycastDirection(){
+        Vector3 returnVector = new Vector3(
+            transform.position.x - transform.parent.GetChild(0).position.x,
+            transform.position.y - transform.parent.GetChild(0).position.y,
+            transform.position.z - transform.parent.GetChild(0).position.z
+        );
+        return returnVector;
+    }
+
+    private void setCameraPosition(){
+        //update the camera position
+        this.transform.localPosition = new Vector3(
+            (float)Math.Sin(theta) * (float)Math.Sin(phi) * tempCameraDistance,      //xpos
+            (float)Math.Cos(phi) * tempCameraDistance,                               //ypos
+            (float)Math.Cos(theta) * (float)Math.Sin(phi) * tempCameraDistance);  
     }
 }}

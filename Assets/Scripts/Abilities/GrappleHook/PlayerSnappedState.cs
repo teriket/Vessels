@@ -20,9 +20,11 @@ public class PlayerSnappedState : IState
 {
     GrappleHook owner;
     GameObject collidedObject;
+    float offset;
 
-    public PlayerSnappedState(GrappleHook owner){
+    public PlayerSnappedState(GrappleHook owner, Transform offset){
         this.owner = owner;
+        this.offset = offset.localPosition.y;
     }
 
     public void enter(){}
@@ -33,7 +35,11 @@ public class PlayerSnappedState : IState
 /// </summary>
     public void execute(){
         owner.player.transform.GetChild(0).GetComponent<CharacterMover>().zeroVelocity();
-        owner.player.transform.GetChild(0).position = owner.transform.position;
+        owner.player.transform.GetChild(0).position = new Vector3(
+            owner.transform.position.x,
+            owner.transform.position.y - offset,
+            owner.transform.position.z
+        );
         if(Input.GetButtonDown("Jump")){
             owner.player.transform.GetChild(0).GetComponent<CharacterMover>().jump();
             owner.currentState.changeState(new ReelingGrappleState(owner));

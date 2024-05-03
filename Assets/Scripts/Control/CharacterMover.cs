@@ -4,8 +4,8 @@ using System.Collections.Generic;
 using UnityEngine;
 /**
 Author:         Tanner Hunt
-Date:           4/24/2024
-Version:        0.1.3
+Date:           5/2/2024
+Version:        1.0
 Description:    This Code interfaces with the Character Controller component and handles
                 basic character movement, like walking, strafing, and jumping.
 ChangeLog:      V 0.1.0 -- 4/19/2024
@@ -28,6 +28,10 @@ ChangeLog:      V 0.1.0 -- 4/19/2024
                     --Player now experiences different gravity while holding the space
                     bar after jumping
                     --Dev time: 0.25 Hours
+                V 1.0 5/2/3024
+                    --Added momentum to the player from velocity events.
+                    --touching the floor now cancel momentum events.
+                    --dev time: 1 hour
 */
 
 namespace Control{
@@ -50,6 +54,9 @@ public class CharacterMover : MonoBehaviour
         jumping
     }
     public CharacterState characterState;
+    private const int playerMass = 120;
+    private bool hasMomentum = false;
+    [SerializeField] float maximumVelocity = 1f;
 
 
 /// <summary>
@@ -72,7 +79,11 @@ public class CharacterMover : MonoBehaviour
         if (groundedPlayer && playerVelocity.y < 0)
         {
             setCharacterState(CharacterState.normalGamePlay);
-            playerVelocity.y = 0f;
+            if(hasMomentum){
+                playerVelocity = new Vector3(0, 0, 0);
+                hasMomentum = false;
+            }
+            else playerVelocity.y = 0f;
         }
 
         if(Input.GetButtonUp("Jump") && isJumping){
@@ -208,8 +219,26 @@ public class CharacterMover : MonoBehaviour
         playerVelocity.y += Mathf.Sqrt(jumpHeight * -3.0f * gravityValue);
     }
 
+/// <summary>
+/// Zeroes the players movement
+/// </summary>
     public void zeroVelocity(){
         playerVelocity = new Vector3(0, 0, 0);
     }
+
+/// <summary>
+/// Adds momentum to a velocity event, like the grapple hook, launching the player through
+/// the air.  Momentum added is limited so the player is not launched into space.
+/// </summary>
+/// <param name="velocity"></param>
+    public void addMomentum(Vector3 velocity){
+        if(velocity.sqrMagnitude > maximumVelocity){
+            velocity = velocity.normalized * maximumVelocity;
+        }
+        playerVelocity += velocity * playerMass;
+        hasMomentum = true;
+        print(velocity + " magnitude of " + velocity.magnitude);
+    }
 }
+
 }

@@ -4,8 +4,8 @@ using UnityEngine;
 using Control;
 /**
 Author:         Tanner Hunt
-Date:           4/24/2024
-Version:        0.1.1
+Date:           5/2/2024
+Version:        0.1.2
 Description:    If the grapple hook is released or gets too far away, it should return
                 to the player and transition to the idle state.
 ChangeLog:      V 0.1.0 -- 4/22/2024
@@ -19,6 +19,9 @@ ChangeLog:      V 0.1.0 -- 4/22/2024
                     crashing of the game and clipping walls.
                     --NYI: state should unchild the grapple from the collision object
                     if it came from the stuck state.
+                V 0.1.2 -- 5/2/2024
+                    --Movement now implements Time.deltaTime to maintain consistency between
+                    playtesting and builds
 */
 namespace Abilities{
 public class ReelingGrappleState : IState
@@ -53,7 +56,7 @@ public class ReelingGrappleState : IState
 /// </summary>
     public void execute(){
         reelSpeed = owner.reelSpeed * Time.deltaTime;    
-        owner.transform.position = Vector3.MoveTowards(owner.transform.position, owner.player.transform.position, reelSpeed);
+        owner.transform.position = Vector3.MoveTowards(owner.transform.position, owner.player.transform.position, reelSpeed * Time.deltaTime);
         if(Vector3.Distance(owner.transform.position, owner.player.transform.position) < 0.01f
         && Time.time - cooldownStartTime > owner.cooldownTime){
             owner.currentState.changeState(new IdleGrappleState(owner));
