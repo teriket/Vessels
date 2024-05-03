@@ -22,6 +22,8 @@ ChangeLog:      V 0.1.0 -- 4/24/2024
                     --Dev time: 0.25 hours
                 V 0.1.2 5/2/2024
                     --Canceling reeling in the player now gives them momentum
+                    --Movement now implements Time.deltaTime to maintain consistency between
+                    playtesting and builds
                     --dev time rolled into the character mover script.
 */
 namespace Abilities{
