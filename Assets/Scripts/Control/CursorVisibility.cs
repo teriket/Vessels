@@ -7,9 +7,7 @@ Author:         Tanner Hunt
 Date:           4/20/2024
 Version:        0.1
 Description:    Makes the cursor visible depending on the mouse context the player is in
-ChangeLog:      V 0.1 -- 4/20/2024
-                    --Implemented Code
-                    --Dev time: 0.25 Hours
+ChangeLog:      
 */
 
 namespace Control{

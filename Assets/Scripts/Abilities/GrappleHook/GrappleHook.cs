@@ -12,16 +12,7 @@ Description:    Shoots a grapple hook in the direction the player is facing up t
                 free the player from this effect and reel the grapple hook back into
                 place.  Allowing the player close enough to the stuck grappling hook
                 will allow them to hold onto the wall.
-ChangeLog:      V 0.1.0 -- 4/22/2024
-                    --Implementation
-                    --NYI: text here
-                    --Dev time: 3 hours.  Dev time for all states is wrapped into this.
-                V 0.1.1 -- 4/24/2024
-                    --Implemented reeling grapple state
-                    --implemented stuck grapple state
-                    --Added reel speed, player pull speed, and cooldown time
-                    --implemented player stuck state
-                    --Dev time: 5 hours
+ChangeLog:      
 */
 namespace Abilities{
 public class GrappleHook : MonoBehaviour
@@ -36,6 +27,8 @@ public class GrappleHook : MonoBehaviour
     [SerializeField]public float reelSpeed = 10f;
     [SerializeField]public float playerPullSpeed = 10f;
     [SerializeField]public float cooldownTime = 2f;
+    [SerializeField]public float bonusJumpMultiplier;
+    [SerializeField]public float playerSnapDistance;
 
     void Start(){
         sphereCollider = GetComponent<SphereCollider>();

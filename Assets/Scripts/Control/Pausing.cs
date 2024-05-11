@@ -6,10 +6,7 @@ Author:         Tanner Hunt
 Date:           4/22/2024
 Version:        0.1.0
 Description:    Pauses physics simulations when the mouse context is changed
-ChangeLog:      V 0.1.0 -- 4/23/2024
-                    --Changes the time scale based on the mouse context
-                    --NYI: Send a message to other scripts to cease their activity?
-                    --Dev time: 0.25 Hours
+ChangeLog:      
 */
 namespace Control{
 public class Pausing : MonoBehaviour

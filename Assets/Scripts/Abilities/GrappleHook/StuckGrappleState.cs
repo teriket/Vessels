@@ -9,22 +9,7 @@ Version:        0.1.2
 Description:    Behavior of the grapple hook when it has collided with a wall.  The
                 grapple should stop movement, child itself to the object and keep its
                 relative positioning, then drag the player towards it.
-ChangeLog:      V 0.1.0 -- 4/24/2024
-                    --State now disables gravity on the player
-                    --State now uses the CharacterController class to move the player
-                    rather than transform.position to prevent jitter
-                    --NYI: tether should break if player manages to get too far away
-                    --Dev time: devtime rolled into grapple hook master class.
-                V 0.1.1 -- 4/28/2024
-                    --This state now checks whether the players body or the players head
-                    is close to the grapple hook, and adjusts the snapping position in
-                    the playerSnappedState to avoid character clipping
-                    --Dev time: 0.25 hours
-                V 0.1.2 5/2/2024
-                    --Canceling reeling in the player now gives them momentum
-                    --Movement now implements Time.deltaTime to maintain consistency between
-                    playtesting and builds
-                    --dev time rolled into the character mover script.
+ChangeLog:      
 */
 namespace Abilities{
 public class StuckGrappleState : IState
@@ -48,6 +33,7 @@ public class StuckGrappleState : IState
         owner.player.transform.GetChild(0).GetComponent<CharacterMover>().
             setCharacterState(CharacterMover.CharacterState.grappling);
         owner.transform.SetParent(collidedObject.transform);
+//        owner.transform.localScale = new Vector3(1/owner.transform.parent.lossyScale.x, 1/owner.transform.parent.lossyScale.y, 1/owner.transform.parent.lossyScale.z);
     }
     
 /// <summary>
@@ -63,10 +49,10 @@ public class StuckGrappleState : IState
             owner.currentState.changeState(new ReelingGrappleState(owner));
             owner.player.transform.GetChild(0).GetComponent<CharacterMover>().addMomentum(moveToVector());
         }
-        if(Vector3.Distance(owner.transform.position, owner.player.transform.position) < 0.1){
+        if(Vector3.Distance(owner.transform.position, owner.player.transform.position) < owner.playerSnapDistance){
             owner.currentState.changeState(new PlayerSnappedState(owner, owner.player.transform.GetChild(0)));
         }
-        if(Vector3.Distance(owner.transform.position, owner.player.transform.GetChild(2).position) < 0.1 )
+        if(Vector3.Distance(owner.transform.position, owner.player.transform.GetChild(2).position) < owner.playerSnapDistance )
         {
             owner.currentState.changeState(new PlayerSnappedState(owner, owner.player.transform.GetChild(2)));
 

@@ -6,9 +6,7 @@ Author:         Tanner Hunt
 Date:           4/21/2024
 Version:        0.1.0
 Description:    The methods all States in a statemachine should implement.
-ChangeLog:      V 0.1.0 -- 4/21/2024
-                    --Implemented Code
-                    --Dev time: 0 Hours
+ChangeLog:      
 */
 public interface IState
 {

@@ -8,13 +8,7 @@ Version:        0.1.0
 Description:    Moves the trolley from one point to the next and makes it look
                 directly at the next point on the track.  Trolley points should
                 not be childed directly to the trolley.
-ChangeLog:      V 0.1.0 -- 4/24/2024
-                    --The trolley uses Vector3.MoveTowards to move to the next point
-                    --At the end, the trolley snaps back to the original point
-                    --NYI: make bezier curve to follow for nicer animations or lerp
-                    the rotation of the trolley.
-                    --NYI: make tracks loop to start.
-                    --Dev time: 0.5 Hours
+ChangeLog:      
 */
 public class TrolleyPathing : MonoBehaviour
 {

@@ -8,20 +8,7 @@ Date:           5/2/2024
 Version:        0.1.2
 Description:    If the grapple hook is released or gets too far away, it should return
                 to the player and transition to the idle state.
-ChangeLog:      V 0.1.0 -- 4/22/2024
-                    --Entering this state now cancels all previous velocity
-                    --The Grapple hook disables its sphere collider
-                    --The grapple hook moves towards the player
-                    --The state returns to idle when it's close enough to the player
-                    --Dev time: dev time is rolled into grapple hook master class
-                V 0.1.1 -- 4/24/2022
-                    --Reeling the grapple hook now incurs a cooldown to prevent
-                    crashing of the game and clipping walls.
-                    --NYI: state should unchild the grapple from the collision object
-                    if it came from the stuck state.
-                V 0.1.2 -- 5/2/2024
-                    --Movement now implements Time.deltaTime to maintain consistency between
-                    playtesting and builds
+ChangeLog:      
 */
 namespace Abilities{
 public class ReelingGrappleState : IState

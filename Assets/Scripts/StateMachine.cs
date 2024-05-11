@@ -10,10 +10,7 @@ Description:    Manages the state of a script.  To use, a monobehaviour should d
                 the method should call currentState.changeState(new theNewState(this)).
                 In update, the script should call currentState.Update();, or whatever
                 timeframe the state needs to be called.
-ChangeLog:      V 0.1.0 -- 4/20/2024
-                    --Implemented Code
-                    --NYI: text here
-                    --Dev time: 0.5 Hours
+ChangeLog:      
 */
 public class StateMachine
 {

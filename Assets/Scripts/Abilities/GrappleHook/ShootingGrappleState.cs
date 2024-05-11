@@ -12,19 +12,7 @@ Description:    How the grapple hook should move in air.  Upon collision, it sho
                 then transfer to the stuck state.  If the player lets go of the 
                 right mouse button or it gets too far away, it should transfer to the 
                 reeling state.
-ChangeLog:      V 0.1.0 -- 4/22/2024
-                    --Grapple hook now shoots in the forward direction of the camera
-                    --Grapple hook now accelerates as the player holds the RMB down
-                    until it reaches terminal velocity.
-                    --The state now changes if the Grapple hook collides with an object 
-                    to the StuckGrappleState
-                    --The Grapple Hook now switches to the ReelingGrappleState if it overextends
-                    past the max extension distance or the player releases the RMB
-                    --NYI: Animation styles for how the grapple hook accelerates
-                    --Dev time: dev time is wrapped in the Grapple Hook master class
-                V 0.1.1 -- 5/2/2024
-                    --Movement now implements Time.deltaTime to maintain consistency between
-                    playtesting and builds
+ChangeLog:      
 */
 namespace Abilities{
 public class ShootingGrappleState :  IState

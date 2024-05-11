@@ -7,16 +7,7 @@ Author:         Tanner Hunt
 Date:           4/21/2024
 Version:        0.1.2
 Description:    This code toggles on and off the escape menu if the player presses the escape key
-ChangeLog:      V 0.1.0 -- 4/19/2024
-                    --Dev time: 0.25 Hours
-                V 0.1.1 -- 4/20/2024
-                    --added mouse context functionality, which stops camera movements
-                    if the menu is open
-                    --Dev time: 0 Hours
-                V 0.1.2 -- 4/21/2024
-                    --extracted the ToggleMenu() function so the Resume Button could call
-                    upon it.
-                    --Dev time: 0 Hours
+ChangeLog:      
 
 */
 

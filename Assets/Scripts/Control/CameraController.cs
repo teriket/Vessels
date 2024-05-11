@@ -5,37 +5,23 @@ using UnityEngine;
 
 /**
 Author:         Tanner Hunt
-Date:           5/2/2024
-Version:        1.0.0
+Date:           5/7/2024
+Version:        1.0.2
 Description:    This Code handles camera movements and rotations around the player character.
-ChangeLog:      V 0.1.0 -- 4/16/2024
-                    --Added panning around the character in a sphere centered at character.
-                    --Added Zooming controls with multiple animation types
-                    --Dev time: 4 hours
-                    --NYI: snapping the camera closer to the player if an object interferes with camera views
-                V 0.1.1 -- 4/19/2024
-                    --Moved pan() and lookat() to update() from fixedupdate() to fix character jitter
-                    --altered panning so it happens with all mouse movements rather than clicks
-                    --NYI: theta may need to be moved to it's own script, as it interacts with character movements, might interact with animation and spells later.
-                    --NYI: Make mouse movements context sensitive so the camera doesn't move while a menu is open.
-                    --Dev time: 0 Hours
-                V 0.1.2 -- 4/20/2024
-                    --Added then removed support for mouse context; it is now handled by
-                    an event in the pausing script.
-                    --Moved camera movements back to LateUpdate() because of new jitter
-                    --Dev time: 0 Hours
-                V 0.1.3 -- 4/22/2024
-                    --Fixed an error where the camera could be zoomed in and out while the game
-                    is paused
-                    --Dev time: 0 hours
-                V 0.1.4 -- 4/24/2024
-                    --Fixed camera jitter again by removing the Time.deltaTime calculation
-                    from camera panning
-                    --Pausing of camera movement in pan is now done through mouse contexts
-                    --Dev time: 0.25 hours
-                V 1.0.0 -- 5/2/2024
-                    --Camera now snaps closer to the player if an object is in the way
-                    --Dev time -- 2 hours
+                panning the mouse in the x or y directions should rotate the camera and
+                the scroll wheel should zoom in or out.  The camera stops moving when
+                ui elements are active.
+ChangeLog:      
+                V 1.0.1 -- 5/3/2024
+                    --Put Time.deltaTime into camera panning again to create consistency
+                    between test environment and full builds.
+                    -- Camera now lerps to the new camera position for smoother camera
+                    movements.
+                    --NYI: fix bug where camera snaps around when player strafes or backpedals
+                    --Dev time: 1 hour
+                V 1.0.2 -- 5/7/2024
+                    --Camera now follows behind the players shoulder
+                    --dev time is rolled into the camerafollower script
 
 */
 namespace Control{
@@ -59,6 +45,7 @@ public class CameraController : MonoBehaviour
     [SerializeField]float maxZoom = 100f;            //how far away the camera is allowed from the player
     [SerializeField] AnimationType animationType;   //the way the camera should move towards or away from the player
     private float tempCameraDistance;
+    [SerializeField]float shoulderSlide;
 
     public enum AnimationType{
         linear,
@@ -71,7 +58,7 @@ public class CameraController : MonoBehaviour
 /// </summary>
     void Start()
     {
-        character = GameObject.Find("Character");
+        character = transform.parent.GetChild(3).gameObject;
         calculateCameraArmLength();
     }
 
@@ -99,12 +86,12 @@ public class CameraController : MonoBehaviour
 
         //detect panning of mouse
         if(ypan != 0){
-            phi = Mathf.Clamp(phi + ypan * panSpeed,    //magic value prevents jumping and fixing of
+            phi = Mathf.Clamp(phi + ypan * panSpeed * Time.deltaTime,    //magic value prevents jumping and fixing of
             0.0001f,                                    //camera angles/rotation to 0 and pi
             (float)Math.PI - 0.0001f);                  // 
         }
         if(xpan != 0){
-            theta = theta + xpan * panSpeed;
+            theta = theta + xpan * panSpeed * Time.deltaTime;
         }
 
    //zpos
@@ -260,9 +247,7 @@ public class CameraController : MonoBehaviour
     private void snapCameraForward(){
         RaycastHit hit;
         int layerMask = (0b00011); //mask layers 8 and 16
-        Debug.DrawRay(transform.parent.GetChild(0).position, snapCameraRaycastDirection(), Color.red, 1f);
         if(Physics.Raycast(transform.parent.GetChild(0).position, snapCameraRaycastDirection(), out hit, armLength, layerMask)){
-            print(hit.transform.gameObject);
             tempCameraDistance = hit.distance;
             return;
         }
@@ -280,9 +265,11 @@ public class CameraController : MonoBehaviour
 
     private void setCameraPosition(){
         //update the camera position
-        this.transform.localPosition = new Vector3(
+    Vector3 currentPosition = this.transform.localPosition;
+    Vector3 moveToPosition = new Vector3(
             (float)Math.Sin(theta) * (float)Math.Sin(phi) * tempCameraDistance,      //xpos
             (float)Math.Cos(phi) * tempCameraDistance,                               //ypos
-            (float)Math.Cos(theta) * (float)Math.Sin(phi) * tempCameraDistance);  
+            (float)Math.Cos(theta) * (float)Math.Sin(phi) * tempCameraDistance);
+    this.transform.localPosition = Vector3.Lerp(currentPosition, moveToPosition, .5f);
     }
 }}

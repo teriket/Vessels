@@ -4,14 +4,11 @@ using UnityEngine;
 /**
 Author:         Tanner Hunt
 Date:           4/21/2024
-Version:        0.1.1
+Version:        0.1.0
 Description:    How the grapple hook behaves while it isn't being utilized.  The Sphere
                 Collider should be disabled, and the hook should listen for an activation
                 event, then transfer to the shooting state.
-ChangeLog:      V 0.1.0 -- 4/21/2024
-                    --The grapple hook now snaps to the player while idle
-                    --the grapple hook now disables it's collider while idle
-                    --Dev time: dev time is wrapped in the Grapple Hook master class
+ChangeLog:      
 */
 namespace Abilities{
 public class IdleGrappleState :  IState
