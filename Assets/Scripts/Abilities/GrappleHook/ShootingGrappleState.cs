@@ -29,6 +29,7 @@ public class ShootingGrappleState :  IState
 /// Cache variables.  Subscribe to collision events in the collision messenger.
 /// </summary>
     public void enter(){
+        owner.isCoolingDown = true;
         owner.GetComponent<SphereCollider>().enabled = true;
         rb = owner.GetComponent<Rigidbody>();
         forceDirection = calculateForceDirection();

@@ -4,8 +4,8 @@ using System.Collections.Generic;
 using UnityEngine;
 /**
 Author:         Tanner Hunt
-Date:           5/8/2024
-Version:        1.1.0
+Date:           5/12/2024
+Version:        2.0.0
 Description:    This Code interfaces with the Character Controller component and handles
                 basic character movement, like walking, strafing, and jumping.  Now also
                 creates velocity events on the player, like being catapulted from the sling
@@ -22,44 +22,42 @@ ChangeLog:
                     --NYI: isJumping is redundant to character state
                     --NYI: This class has taken on too much responsibility.  Tease out vertical movement
                     and momentum from this class.
+                V 2.0.0 -- 5/12/2024
+                    --Refactored code and removed responsibility of jumping and other velocity 
+                    events from this class
+                    --removed magnitude helper function in favor of built-in funcitonality
+                    --removed player velocity from this class, it is now referenced from the
+                    characterstate class
+                    --move stays in this class.  the velocityEvents class also changes the
+                    velocity that this method call references, but shouldn't be in both classes.
+                    It seems more appropriate for it to be called here.
+                    --Player now accelerates while they run, up to a maximum speed
 */
 
 namespace Control{
 public class CharacterMover : MonoBehaviour
 {
-    private CharacterController controller;             //the character controller component on the character
-    private Vector3 playerVelocity;                     //how fast the character is moving
-    private bool groundedPlayer;                        //whether or not the player is touching the ground
-    private float gravityValue;
-    [SerializeField]float playerSpeed = 2.0f;           //how fast the player should move
-    [SerializeField]float jumpHeight = 1.0f;            //how heigh the player should jump
-    [SerializeField]float defaultGravityValue = -16f;   //the strength of gravity during normal gameplay
-    [SerializeField]float grapplingGravityValue = 0f;   //the strength of gravity while reeling on the grapple hook
-    [SerializeField]float jumpingGravityValue = -9.81f; //the momentary lightness a player feels until they release the spacebar
-    private CameraController cameraController;          //reference to the camera controller; determines the forward direction.
-    private bool isJumping;
-    public enum CharacterState{
-        normalGamePlay,
-        grappling,
-        jumping
-    }
-    public CharacterState characterState;
+    private CharacterState characterState;
+    private CharacterController controller;
+    private CharacterState owner;                  
+    [SerializeField]float defaultPlayerSpeed = 2.0f;
+    [SerializeField]float maxPlayerSpeed;
+    [SerializeField]float playerAcceleration;
+    private float playerSpeed;           
+    private CameraController cameraController;          
     private Vector3 floorNormalDir;
-    [SerializeField] float maximumLaunchVelocity = 1f;
     [SerializeField][Range(0,1)] float slideAngle;
     [SerializeField][Range(0, 10)]float slideSpeedMultiplier;
-    [SerializeField][Range(0, 10)]float joltDownFromJump;
     [SerializeField]float overrideVelocityMultiplier;
-    bool accelerateGravityCoroutineRunning = false;
     private IEnumerator coroutine;
 
 
 /// <summary>
 /// Cache the camera controller and the character controller
 /// </summary>
-    private void Start()
+    public void Start()
     {
-        setCharacterState(CharacterState.normalGamePlay);
+        characterState = this.GetComponent<CharacterState>();
         controller = gameObject.GetComponent<CharacterController>();
         cameraController = this.transform.parent.GetComponentInChildren<CameraController>();
     }
@@ -68,19 +66,8 @@ public class CharacterMover : MonoBehaviour
 /// Checks the player for collisions with the ground.  Moves the player if they press
 /// the movement buttons.  The player jumps if they press the jump key.
 /// </summary>
-    void Update()
+    public void Update()
     {
-        Debug.DrawRay(transform.position, transform.forward, Color.blue, 2f);
-        groundedPlayer = controller.isGrounded;
-        if (groundedPlayer && playerVelocity.y < 0 && !slide())
-        {
-            setCharacterState(CharacterState.normalGamePlay);
-            zeroVelocity();
-        }
-
-        if(Input.GetButtonUp("Jump") && isJumping){
-            setCharacterState(CharacterState.normalGamePlay);
-        }
         Vector3 move = new Vector3();
 
         if(GetComponent<MouseContext>().getMouseContext() != MouseContext.mouseContext.menu){
@@ -89,24 +76,15 @@ public class CharacterMover : MonoBehaviour
 
         if (move != Vector3.zero)
         {
-            move = move / magnitude(move);
+            playerSpeed += playerAcceleration * Time.deltaTime;
+            playerSpeed = Mathf.Clamp(playerSpeed, defaultPlayerSpeed, maxPlayerSpeed);
+            move = move.normalized;
             controller.Move(move * Time.deltaTime * playerSpeed);
             gameObject.transform.forward = move;
             reducePlayerVelocity();
         }
-
-        // Changes the height position of the player..
-        if (Input.GetButtonDown("Jump") && groundedPlayer)
-        {
-            jump();
-        }
-        if(Input.GetButtonUp("Jump") && !groundedPlayer && characterState == CharacterState.jumping){
-            setCharacterState(CharacterState.normalGamePlay);
-            accelerateGravityCoroutineRunning = false;
-        }
-
-        playerVelocity.y += gravityValue * Time.deltaTime;
-        controller.Move(playerVelocity * Time.deltaTime);
+        else playerSpeed = defaultPlayerSpeed;
+        controller.Move(characterState.playerVelocity * Time.deltaTime);
     }
 
 /// <summary>
@@ -161,125 +139,20 @@ public class CharacterMover : MonoBehaviour
     }
 
 /// <summary>
-/// A helper function that determines the magnitude of a vector.  Useful in normalizing
-/// player movement direction if they press multiple inputs at the same time.
-/// </summary>
-/// <param name="vector3">The vector to be normalized</param>
-/// <returns>the magnitude of vector3</returns>
-    private float magnitude(Vector3 vector3){
-        return(
-            (float)Math.Sqrt(
-                Math.Pow(vector3.x, 2) +
-                Math.Pow(vector3.y, 2) +
-                Math.Pow(vector3.z, 2)
-            )
-        );
-    }
-
-/// <summary>
-/// Handles the way the player should fall during different gameplay moments, like while
-/// holding jump, grapple hooking, and normal gameplay.
-/// </summary>
-    private void characterStateUpdate(){
-        switch(characterState){
-            case CharacterState.normalGamePlay:
-                gravityValue = defaultGravityValue;
-                break;
-            case CharacterState.grappling:
-                gravityValue = grapplingGravityValue;
-                break;
-            case CharacterState.jumping:
-                gravityValue = jumpingGravityValue;
-                break;
-            default:
-                gravityValue = defaultGravityValue;
-                break;
-        }
-    }
-    
-/// <summary>
-/// allows other scripts to set the current player state for gravity purposes.
-/// </summary>
-/// <param name="characterState">declared CharacterMover.CharacterState.state,
-/// states include normalGamePlay, reeling</param>
-    public void setCharacterState(CharacterState characterState){
-        this.characterState = characterState;
-        characterStateUpdate();
-    }
-
-/// <summary>
-/// Jumps the player.  The player is lighter until they release the jumping button.
-/// </summary>
-    public void jump(float jumpMultiplier = 1, float xDir = 0, float yDir = 1, float zDir = 0){
-        Vector3 jumpDirection = new Vector3(xDir, yDir, zDir).normalized;
-        setCharacterState(CharacterState.jumping);
-        isJumping = true;
-        playerVelocity += jumpDirection *jumpMultiplier * Mathf.Sqrt(jumpHeight * -3.0f * gravityValue);
-        coroutine = accelerateGravity(Mathf.Sqrt(jumpHeight * -3.0f * gravityValue)/ -jumpingGravityValue);
-        if(!accelerateGravityCoroutineRunning){
-        StartCoroutine(coroutine);
-        }
-    }
-
-/// <summary>
 /// Zeroes the players movement
 /// </summary>
     public void zeroVelocity(){
-        playerVelocity = new Vector3(0, 0, 0);
+        characterState.playerVelocity = new Vector3(0, 0, 0);
     }
 
 /// <summary>
-/// Adds momentum to a velocity event, like the grapple hook, launching the player through
-/// the air.  Momentum added is limited so the player is not launched into space.
+/// Slows down the players velocity if they hold down a movement key.
 /// </summary>
-/// <param name="velocity"></param>
-    public void addMomentum(Vector3 velocity){
-        playerVelocity += velocity.normalized * maximumLaunchVelocity;
-    }
-
-/// <summary>
-/// Moves the player along the gradient of a slope that is too steep.
-/// </summary>
-/// <returns>True if the player is sliding to lock jumping and zeroing velocities</returns>
-    bool slide(){
-        if(floorNormalDir.y < slideAngle){
-        Vector3 slideDir = new Vector3(
-            floorNormalDir.x,
-            -(Mathf.Pow(floorNormalDir.x, 2) + Mathf.Pow(floorNormalDir.z, 2)/floorNormalDir.y),
-            floorNormalDir.z);
-
-            playerVelocity += slideDir * Time.deltaTime * slideSpeedMultiplier;
-            return true;
-        }
-        return false;
-    }
-
-/// <summary>
-/// gets the normal of the geometry that is below the player
-/// </summary>
-/// <param name="hit"></param>
-    void OnControllerColliderHit(ControllerColliderHit hit){
-        if(hit.normal.y < slideAngle && hit.point.y < this.transform.position.y){
-            floorNormalDir = hit.normal;
-            }
-        else floorNormalDir = new Vector3(0, 1, 0);
-    }
-
-    void reducePlayerVelocity(){
-        playerVelocity = new Vector3(playerVelocity.x * overrideVelocityMultiplier, playerVelocity.y, playerVelocity.z * overrideVelocityMultiplier);
-        if(playerVelocity.magnitude < 0.1f){
+    private void reducePlayerVelocity(){
+        characterState.playerVelocity = new Vector3(characterState.playerVelocity.x * overrideVelocityMultiplier, characterState.playerVelocity.y, characterState.playerVelocity.z * overrideVelocityMultiplier);
+        if(characterState.playerVelocity.magnitude < 0.1f){
             zeroVelocity();
         }
     }
-
-    private IEnumerator accelerateGravity(float waitTime){
-        yield return new WaitForSeconds(waitTime);
-        accelerateGravityCoroutineRunning = false;
-        if(characterState == CharacterState.jumping){
-            setCharacterState(CharacterState.normalGamePlay);
-            print(gravityValue);
-        }
-    }
-
 
 }}

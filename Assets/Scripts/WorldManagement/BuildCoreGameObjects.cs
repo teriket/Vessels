@@ -5,14 +5,14 @@ using UnityEngine;
 Author:         Tanner Hunt
 Date:           
 Version:        0.1.0
-Description:    imports the players acquired upgrades when the character is loaded
-ChangeLog:      V 0.1.0 
+Description:    Singleton pattern to create all core game elements: player, UI,
+                GameManager, & GrappleHook
+ChangeLog:      V 0.1.0 -- 
                     --Implemented Code
                     --NYI: text here
                     --Dev time: 0.25 Hours
 */
-namespace WorldManagement{
-public class CharacterFactory : MonoBehaviour
+public class BuildCoreGameObjects : MonoBehaviour
 {
     // Start is called before the first frame update
     void Start()
@@ -25,4 +25,4 @@ public class CharacterFactory : MonoBehaviour
     {
         
     }
-}}
+}

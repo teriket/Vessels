@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 /**
-Author:         Tanner Hunt
+Author:         
 Date:           4/21/2024
 Version:        0.1.0
 Description:    The methods all States in a statemachine should implement.

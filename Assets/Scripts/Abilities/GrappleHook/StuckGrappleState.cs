@@ -30,8 +30,8 @@ public class StuckGrappleState : IState
 /// </summary>
     public void enter(){
         owner.GetComponent<Rigidbody>().velocity = new Vector3(0, 0, 0);
-        owner.player.transform.GetChild(0).GetComponent<CharacterMover>().
-            setCharacterState(CharacterMover.CharacterState.grappling);
+        owner.player.transform.GetChild(0).GetComponent<CharacterState>().
+            setGravityState(CharacterState.CharacterGravity.grappling);
         owner.transform.SetParent(collidedObject.transform);
 //        owner.transform.localScale = new Vector3(1/owner.transform.parent.lossyScale.x, 1/owner.transform.parent.lossyScale.y, 1/owner.transform.parent.lossyScale.z);
     }
@@ -47,7 +47,7 @@ public class StuckGrappleState : IState
         owner.player.transform.GetChild(0).GetComponent<CharacterController>().Move(moveToVector());
         if(Input.GetMouseButtonUp(1)){
             owner.currentState.changeState(new ReelingGrappleState(owner));
-            owner.player.transform.GetChild(0).GetComponent<CharacterMover>().addMomentum(moveToVector());
+            owner.player.transform.GetChild(0).GetComponent<VelocityEvents>().addMomentum(moveToVector());
         }
         if(Vector3.Distance(owner.transform.position, owner.player.transform.position) < owner.playerSnapDistance){
             owner.currentState.changeState(new PlayerSnappedState(owner, owner.player.transform.GetChild(0)));

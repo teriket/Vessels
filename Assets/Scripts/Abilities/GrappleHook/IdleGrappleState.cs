@@ -20,6 +20,7 @@ public class IdleGrappleState :  IState
     }
 
     public void enter(){
+        owner.isCoolingDown = false;
         owner.GetComponent<SphereCollider>().enabled = false;
     }
 

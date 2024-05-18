@@ -4,14 +4,16 @@ using UnityEngine;
 using Control;
 /**
 Author:         Tanner Hunt
-Date:           5/8/2024
-Version:        0.2.0
+Date:           5/12/2024
+Version:        0.3.0
 Description:    Sticks the player to the wall the grapple hook belongs to.  The player
                 is allowed to jump to exit this state.
 ChangeLog:      
                 V 0.2.0 -- 5/8/2024
                     --player now jumps away from the surface they are attached to by 
                     getting the normal from the collisionMessenger
+                V 0.3.0 -- 5/12/2024
+                    --early upgrade testing of a boosted jump off of walls
 */
 namespace Abilities{
 public class PlayerSnappedState : IState
@@ -22,6 +24,9 @@ public class PlayerSnappedState : IState
     float xJumpDir;
     float zJumpDir;
     CollisionMessenger collisionMessage;
+    float jumpBoost;
+    bool wallJumpBoostUnlocked = false;
+    float reelingDelay;
 
     public PlayerSnappedState(GrappleHook owner, Transform offset){
         this.owner = owner;
@@ -30,6 +35,8 @@ public class PlayerSnappedState : IState
 
     public void enter(){
         collisionMessage = owner.transform.GetComponent<CollisionMessenger>();
+        jumpBoost = owner.bonusJumpMultiplier;
+        reelingDelay = owner.reelingGrappleDelay;
     }
 /// <summary>
 /// cancels any velocity the player has through the charactermover to reduce jitter.
@@ -44,15 +51,26 @@ public class PlayerSnappedState : IState
             owner.transform.position.y - offset,
             owner.transform.position.z
         );
-        if(Input.GetButtonDown("Jump")){
-            xJumpDir = collisionMessage.collisionNormal.x;
-            zJumpDir = collisionMessage.collisionNormal.z;
-            owner.player.transform.GetChild(0).GetComponent<CharacterMover>().jump(owner.bonusJumpMultiplier, xJumpDir, 2, zJumpDir);
-            owner.currentState.changeState(new ReelingGrappleState(owner));
+        if(Input.GetButtonDown("Jump") && !wallJumpBoostUnlocked){
+            boostJump();
+        }
+        if(Input.GetButton("Jump")){
+            jumpBoost += owner.jumpBoostAccrualRate * Time.deltaTime;
+            jumpBoost = Mathf.Clamp(jumpBoost, 0, owner.maxJumpBoost);
+        }
+        if(Input.GetButtonUp("Jump")){
+            boostJump();
         }
         if(Input.GetMouseButtonUp(1)){
-            owner.currentState.changeState(new ReelingGrappleState(owner));
+            owner.currentState.changeState(new ReelingGrappleState(owner, reelingDelay));
         }
+    }
+
+    private void boostJump(){
+            xJumpDir = collisionMessage.collisionNormal.x;
+            zJumpDir = collisionMessage.collisionNormal.z;
+            owner.player.transform.GetChild(0).GetComponent<VelocityEvents>().jump(jumpBoost, xJumpDir, 2, zJumpDir);
+            owner.currentState.changeState(new ReelingGrappleState(owner, reelingDelay));
     }
     public void exit(){
 

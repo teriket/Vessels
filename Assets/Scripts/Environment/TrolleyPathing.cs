@@ -10,6 +10,7 @@ Description:    Moves the trolley from one point to the next and makes it look
                 not be childed directly to the trolley.
 ChangeLog:      
 */
+namespace Environment{
 public class TrolleyPathing : MonoBehaviour
 {
     [SerializeField]Transform[] positions;
@@ -44,4 +45,4 @@ public class TrolleyPathing : MonoBehaviour
         transform.position = Vector3.MoveTowards(transform.position, positions[indexToMoveTo].position, speed);
         transform.LookAt(positions[indexToMoveTo]);
     }
-}
+}}

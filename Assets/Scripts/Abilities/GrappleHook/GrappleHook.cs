@@ -29,6 +29,10 @@ public class GrappleHook : MonoBehaviour
     [SerializeField]public float cooldownTime = 2f;
     [SerializeField]public float bonusJumpMultiplier;
     [SerializeField]public float playerSnapDistance;
+    [SerializeField]public float maxJumpBoost;
+    [SerializeField]public float jumpBoostAccrualRate;
+    public bool isCoolingDown = false;
+    [SerializeField]public float reelingGrappleDelay;
 
     void Start(){
         sphereCollider = GetComponent<SphereCollider>();

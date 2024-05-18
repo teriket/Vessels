@@ -5,8 +5,8 @@ using UnityEngine;
 
 /**
 Author:         Tanner Hunt
-Date:           5/7/2024
-Version:        1.0.2
+Date:           5/13/2024
+Version:        1.0.3
 Description:    This Code handles camera movements and rotations around the player character.
                 panning the mouse in the x or y directions should rotate the camera and
                 the scroll wheel should zoom in or out.  The camera stops moving when
@@ -22,6 +22,8 @@ ChangeLog:
                 V 1.0.2 -- 5/7/2024
                     --Camera now follows behind the players shoulder
                     --dev time is rolled into the camerafollower script
+                V 1.0.3 -- 5/13/2024
+                    --Added a slider to control the minimum and maximum phi camera angles
 
 */
 namespace Control{
@@ -46,6 +48,8 @@ public class CameraController : MonoBehaviour
     [SerializeField] AnimationType animationType;   //the way the camera should move towards or away from the player
     private float tempCameraDistance;
     [SerializeField]float shoulderSlide;
+    [SerializeField][Range(0, Mathf.PI)]float minPhi;
+    [SerializeField][Range(0, Mathf.PI)]float maxPhi;
 
     public enum AnimationType{
         linear,
@@ -86,9 +90,9 @@ public class CameraController : MonoBehaviour
 
         //detect panning of mouse
         if(ypan != 0){
-            phi = Mathf.Clamp(phi + ypan * panSpeed * Time.deltaTime,    //magic value prevents jumping and fixing of
-            0.0001f,                                    //camera angles/rotation to 0 and pi
-            (float)Math.PI - 0.0001f);                  // 
+            phi = Mathf.Clamp(phi + ypan * panSpeed * Time.deltaTime,    
+            maxPhi,                                    
+            minPhi);                  
         }
         if(xpan != 0){
             theta = theta + xpan * panSpeed * Time.deltaTime;
