@@ -27,6 +27,7 @@ public class CharacterState : MonoBehaviour
     [SerializeField]public float defaultGravityValue;  //the strength of gravity during normal gameplay
     [SerializeField]public float grapplingGravityValue; //the strength of gravity while reeling on the grapple hook
     [SerializeField]public float jumpingGravityValue; //the momentary lightness a player feels until they press the spacebar
+    [SerializeField]public float terminalFallVelocity; //the maximum speed the player can fall
 
     void Start()
     {
@@ -57,5 +58,13 @@ public class CharacterState : MonoBehaviour
                     gravityValue = defaultGravityValue;
                 break;
         }
+    }
+
+    void Update(){
+        playerVelocity = new Vector3(
+            playerVelocity.x,
+            Mathf.Clamp(playerVelocity.y, terminalFallVelocity, Mathf.Infinity),
+            playerVelocity.z
+        );
     }
 }}

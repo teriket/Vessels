@@ -106,6 +106,7 @@ public class VelocityEvents : MonoBehaviour
             floorNormalDir.z);
 
             characterState.playerVelocity += slideDir * Time.deltaTime * slideSpeedMultiplier;
+            print(characterState.playerVelocity.y);
             return true;
         }
         return false;

@@ -9814,15 +9814,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 806186929075751254, guid: 3d9855da76b353343aa4909b4e8af4b3, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -62.17
+      value: -68.68
       objectReference: {fileID: 0}
     - target: {fileID: 806186929075751254, guid: 3d9855da76b353343aa4909b4e8af4b3, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 3.4700003
+      value: 11.78
       objectReference: {fileID: 0}
     - target: {fileID: 806186929075751254, guid: 3d9855da76b353343aa4909b4e8af4b3, type: 3}
       propertyPath: m_LocalPosition.z
-      value: -28.34
+      value: -22.03
       objectReference: {fileID: 0}
     - target: {fileID: 806186929075751254, guid: 3d9855da76b353343aa4909b4e8af4b3, type: 3}
       propertyPath: m_LocalRotation.w
@@ -9855,6 +9855,18 @@ PrefabInstance:
     - target: {fileID: 806186929075751255, guid: 3d9855da76b353343aa4909b4e8af4b3, type: 3}
       propertyPath: m_Name
       value: Your Character
+      objectReference: {fileID: 0}
+    - target: {fileID: 806186930698100705, guid: 3d9855da76b353343aa4909b4e8af4b3, type: 3}
+      propertyPath: terminalFallVelocity
+      value: -26
+      objectReference: {fileID: 0}
+    - target: {fileID: 806186930698100706, guid: 3d9855da76b353343aa4909b4e8af4b3, type: 3}
+      propertyPath: slideSpeedMultiplier
+      value: 8
+      objectReference: {fileID: 0}
+    - target: {fileID: 806186930698100714, guid: 3d9855da76b353343aa4909b4e8af4b3, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 4.74
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 3d9855da76b353343aa4909b4e8af4b3, type: 3}
