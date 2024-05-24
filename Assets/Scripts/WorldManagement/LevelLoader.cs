@@ -4,13 +4,15 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 /**
 Author:         Tanner Hunt
-Date:           5/15/2024
-Version:        0.1.0
+Date:           5/23/2024
+Version:        0.2.0
 Description:    loads in the next level and places the character at the appropriate
                 spawn point.
-ChangeLog:      V 0.1.0 -- 5/15/2024
-                    --NYI: Fix bug where jumping through  portal doesn't move player
-                    --NYI: Fix bug where levelLoaders in next level don't work
+ChangeLog:      V 0.2.0 -- 5/23/2024
+                    --Now moved the player to the last level loader found during
+                    the discover phase if none of the level loaders have the appropriate
+                    ID to move the player to.
+
 */
 namespace WorldManagement{
 public class LevelLoader : MonoBehaviour
@@ -29,7 +31,6 @@ public class LevelLoader : MonoBehaviour
 
     void OnTriggerEnter(Collider collider){
         if(collider.gameObject.tag == "Player"){
-            print("collision");
             player = collider.gameObject;
             StartCoroutine("loadSceneAsync");
         }
@@ -41,6 +42,7 @@ public class LevelLoader : MonoBehaviour
             yield return null;
         }
 
+        LevelLoader lastLevelLoader = null;
         //find the correct spawn point to load into, then transfer player there
         foreach(LevelLoader levelLoader in GameObject.FindObjectsOfType<LevelLoader>()){
             if(levelLoader.gameObject.scene == this.gameObject.scene){
@@ -48,10 +50,14 @@ public class LevelLoader : MonoBehaviour
             }
 
             if(levelLoader.thisLoadersNumber == levelLoaderIndexToTeleportTo){
-                print("found it! " + levelLoader.transform.GetChild(0).position);
                 player.transform.parent.position = levelLoader.transform.GetChild(0).position;
             }
+            lastLevelLoader = levelLoader;
         }
+
+        //if no level loader with the correct ID is found
+        Debug.LogError("Did not find a levelLoader ID when loading into the level");
+        player.transform.parent.position = lastLevelLoader.transform.GetChild(0).transform.position;
 
         AsyncOperation asyncUnload = SceneManager.UnloadSceneAsync(this.gameObject.scene.buildIndex);
 

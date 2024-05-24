@@ -3,12 +3,15 @@ using System.Collections.Generic;
 using UnityEngine;
 /**
 Author:         Tanner Hunt
-Date:           4/24/2024
-Version:        0.1.0
+Date:           5/23/2024
+Version:        0.1.1
 Description:    Moves the trolley from one point to the next and makes it look
                 directly at the next point on the track.  Trolley points should
                 not be childed directly to the trolley.
 ChangeLog:      
+                0.1.1
+                    --Added time.deltatime to the speed factor to create more
+                    consistent behavior between testing and builds.
 */
 namespace Environment{
 public class TrolleyPathing : MonoBehaviour
@@ -42,7 +45,7 @@ public class TrolleyPathing : MonoBehaviour
             }
             indexToMoveTo ++;
         }
-        transform.position = Vector3.MoveTowards(transform.position, positions[indexToMoveTo].position, speed);
+        transform.position = Vector3.MoveTowards(transform.position, positions[indexToMoveTo].position, speed * Time.deltaTime);
         transform.LookAt(positions[indexToMoveTo]);
     }
 }}
