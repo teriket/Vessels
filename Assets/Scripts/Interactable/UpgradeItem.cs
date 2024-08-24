@@ -1,8 +1,10 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Saving;
 
-public class ISavable : MonoBehaviour
+namespace Environment{
+public class UpgradeItem : MonoBehaviour, ISavable
 {
     // Start is called before the first frame update
     void Start()
@@ -15,4 +17,11 @@ public class ISavable : MonoBehaviour
     {
         
     }
+
+    public string save(){
+        print(this.gameObject);
+        return "";
+    }
+    public void load(){}
+}
 }
