@@ -5,15 +5,19 @@ using UnityEngine.SceneManagement;
 using Debugging;
 
 namespace Saving{
+    /// <summary>
+    /// Calls save on all active objects in the scene.
+    /// </summary>
 public class LevelSaver : Debugable
 {
+    SaveWriter saveWriter = SaveWriter.getInstance();
 
     public void save(){
         Scene activeScene = SceneManager.GetActiveScene();
         foreach (GameObject obj in activeScene.GetRootGameObjects()){
             saveObjectAndAllChildren(obj);
         }
-
+        saveWriter.pushChangesToSaveFile();
     }
 
     private void saveObjectAndAllChildren(GameObject gameObject){
@@ -28,7 +32,7 @@ public class LevelSaver : Debugable
             return;
         }
         else{
-            obj.GetComponent<ISavable>().save();
+            saveWriter.modifyJSON(obj.GetComponent<ISavable>().save());
         }
     }
 

@@ -2,9 +2,6 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-/// <summary>
-/// An extension of monobehavior.
-/// </summary>
 namespace Debugging{
 public abstract class Debugable : MonoBehaviour
 {
