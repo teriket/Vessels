@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System.IO;
 
 namespace Saving{
     /// <summary>
@@ -9,6 +10,7 @@ namespace Saving{
     /// </summary>
 public class SaveWriter
 {
+    private string path;
     private static SaveWriter instance;
 
     private SaveWriter(){}
@@ -20,11 +22,18 @@ public class SaveWriter
         return instance;
     }
 
-    public void modifyJSON(string writeLine){
-        modifyDeserializedFile();
+    public void pushChangesToSaveFile(){}
+
+    public void buildJSONTree(string activeSceneKey){
+        makeFileIfNull();
+        loadExistingDataIntoJSONTree(activeSceneKey);
     }
 
-    private void modifyDeserializedFile(){
+    public void modifyJsonTree(string writeLine){
+
+        modifyJSONSubtree();
+        streamFileChanges();
+        closeFileStreamAndDeleteDuplicateFile();
         /*The data from the json file should be loaded into a tree
         * saving an object should edit the values in the tree
         * then the tree should be rewritten into the json file
@@ -33,6 +42,29 @@ public class SaveWriter
         */
     }
 
-    public void pushChangesToSaveFile(){}
+    private void makeFileIfNull(){
+        path = Path.Combine(Application.persistentDataPath, "save.json");
+        if(!File.Exists(path)){
+            using (StreamWriter sw = File.CreateText(path)){
+            }
+        }
+    }
+
+    public void loadExistingDataIntoJSONTree(string activeSceneKey){
+        //TODO: locate correct subtree
+        //TODO: 
+    }
+
+    public void modifyJSONSubtree(){
+
+    }
+
+    public void streamFileChanges(){
+
+    }
+
+    public void closeFileStreamAndDeleteDuplicateFile(){
+
+    }
 }
 }

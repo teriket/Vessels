@@ -41,7 +41,6 @@ public class Debugger : MonoBehaviour
 
     public void updateText(){
         TextMeshProUGUI tmpro = debugCanvas.transform.GetChild(0).gameObject.GetComponent<TextMeshProUGUI>();
-        print(debugCanvas.transform.GetChild(0));
         tmpro.SetText(input);
     }
 

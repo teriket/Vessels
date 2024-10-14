@@ -18,9 +18,8 @@ public class UpgradeItem : MonoBehaviour, ISavable
         
     }
 
-    public string save(){
-        print(this.gameObject);
-        return "";
+    public object save(){
+        return this.transform.position;
     }
     public void load(){}
 }

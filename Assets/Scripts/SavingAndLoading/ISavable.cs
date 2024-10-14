@@ -4,7 +4,7 @@ using System.Collections.Generic;
 namespace Saving{
 public interface ISavable
 {
-    public string save();
+    public object save();
     public void load();
 
 }
