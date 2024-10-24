@@ -24,39 +24,16 @@ public class SaveWriter
 
     public void pushChangesToSaveFile(){}
 
-    public void buildJSONTree(string activeSceneKey){
+    public void buildSaveTree(){
         makeFileIfNull();
-        loadExistingDataIntoJSONTree(activeSceneKey);
-    }
-
-    public void modifyJsonTree(string writeLine){
-
-        modifyJSONSubtree();
-        streamFileChanges();
-        closeFileStreamAndDeleteDuplicateFile();
-        /*The data from the json file should be loaded into a tree
-        * saving an object should edit the values in the tree
-        * then the tree should be rewritten into the json file
-        * by streaming a second file and overriding the first one
-        * after the scene is finished editing the tree.
-        */
     }
 
     private void makeFileIfNull(){
-        path = Path.Combine(Application.persistentDataPath, "save.json");
+        path = Path.Combine(Application.persistentDataPath, "save.sav");
         if(!File.Exists(path)){
             using (StreamWriter sw = File.CreateText(path)){
             }
         }
-    }
-
-    public void loadExistingDataIntoJSONTree(string activeSceneKey){
-        //TODO: locate correct subtree
-        //TODO: 
-    }
-
-    public void modifyJSONSubtree(){
-
     }
 
     public void streamFileChanges(){
@@ -68,3 +45,4 @@ public class SaveWriter
     }
 }
 }
+

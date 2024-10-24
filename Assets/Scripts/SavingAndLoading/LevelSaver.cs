@@ -9,13 +9,16 @@ namespace Saving{
     /// <summary>
     /// Calls save on all active objects in the scene.
     /// </summary>
-public class LevelSaver : Debugable
+public class LevelSaver : MonoBehaviour
 {
     SaveWriter saveWriter = SaveWriter.getInstance();
 
+    void Start(){
+        save();
+    }
+
     public void save(){
         Scene activeScene = SceneManager.GetActiveScene();
-        saveWriter.buildJSONTree(activeScene.name);
         foreach (GameObject obj in activeScene.GetRootGameObjects()){
             saveObjectAndAllChildren(obj);
         }
@@ -26,30 +29,17 @@ public class LevelSaver : Debugable
         for(int i = 0; i < gameObject.transform.childCount; i++){
             saveObjectAndAllChildren(gameObject.transform.GetChild(i).gameObject);
         }
-        writeChangesToJsonTree(gameObject);
+        writeChangesToSaveTree(gameObject);
     }
 
 //TODO: an object may have multiple isavable scripts.  ITerate over each isavable.
-    private void writeChangesToJsonTree(GameObject obj){
-        if(obj.GetComponent<ISavable>() is null){
-            return;
-        }
-        else{
-            string jsonString = JsonUtility.ToJson(obj.GetComponent<ISavable>().save());
-            saveWriter.modifyJsonTree(jsonString);
+    private void writeChangesToSaveTree(GameObject obj){
+        foreach(ISavable component in obj.GetComponents<ISavable>()){
+            component.save();
         }
     }
 
-    public override void debugAction(string[] command){
-        switch(command[1]){
-            case "save":
-                print("saving");
-                save();
-                break;
-            default:
-                print(command[1] + ": invalid input.");
-                break;
-        }
-    }
 }
 }
+
+//string jsonString = JsonUtility.ToJson(obj.GetComponent<ISavable>().save());
