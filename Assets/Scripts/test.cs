@@ -5,11 +5,17 @@ using UnityEngine;
 public class test : MonoBehaviour
 {
     // Start is called before the first frame update
-    void Start()
+    void Start(){
+    GameObject go;
+    go = this.gameObject;
     {
-        //get all Isavable objects
-        //save()
+        while(go.transform.parent is not null){
+            print(go.name);
+            go = go.transform.parent.gameObject;
+        }
     }
+    }
+
 
     // Update is called once per frame
     void Update()

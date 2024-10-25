@@ -12,6 +12,8 @@ public class SaveWriter
 {
     private string path;
     private static SaveWriter instance;
+    private SaveTree primaryTree;
+    private SaveTree parallelTree;
 
     private SaveWriter(){}
 
@@ -22,10 +24,21 @@ public class SaveWriter
         return instance;
     }
 
-    public void pushChangesToSaveFile(){}
+    public void pushChangesToSaveFile(){
 
-    public void buildSaveTree(){
+    }
+
+    public void initSaveTree(){
         makeFileIfNull();
+        primaryTree = new SaveTree("game");
+        loadSaveFileIntoSaveTree();
+    }
+
+    public void buildSaveTree(object saveData, ISavable component, GameObject componentParent){
+        parallelTree = new SaveTree("game");
+        parallelTree.buildSubtree(saveData, component, componentParent);
+        primaryTree.saveSubtree(parallelTree);
+
     }
 
     private void makeFileIfNull(){
@@ -40,9 +53,10 @@ public class SaveWriter
 
     }
 
-    public void closeFileStreamAndDeleteDuplicateFile(){
+    public void closeFileStreamAndDeleteDuplicateFile(){}
 
-    }
+    private void loadSaveFileIntoSaveTree(){}
+
 }
 }
 

@@ -19,6 +19,8 @@ public class LevelSaver : MonoBehaviour
 
     public void save(){
         Scene activeScene = SceneManager.GetActiveScene();
+        saveWriter.initSaveTree();
+
         foreach (GameObject obj in activeScene.GetRootGameObjects()){
             saveObjectAndAllChildren(obj);
         }
@@ -32,10 +34,9 @@ public class LevelSaver : MonoBehaviour
         writeChangesToSaveTree(gameObject);
     }
 
-//TODO: an object may have multiple isavable scripts.  ITerate over each isavable.
     private void writeChangesToSaveTree(GameObject obj){
         foreach(ISavable component in obj.GetComponents<ISavable>()){
-            component.save();
+            saveWriter.buildSaveTree(component.save(), component, obj);
         }
     }
 

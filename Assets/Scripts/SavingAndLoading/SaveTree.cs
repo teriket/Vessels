@@ -2,22 +2,89 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using System.IO;
+using UnityEngine.SceneManagement;
 
-public class SaveTree : MonoBehaviour
+namespace Saving{
+public class SaveTree
 {
     SaveTreeNode root;
     SaveTreeNode curNode;
 
+    public SaveTree(string key){
+        SaveTreeNode newRootNode = new SaveTreeNode();
+        newRootNode.key = key;
+        newRootNode.value = null;
+        this.root = newRootNode;
+    }
+
     public void addNode(SaveTreeNode node){
         if(curNode.getChild(node.key) is not null){
-            Debug.Log("Error: File Saving Error.  Tried to write a save value with an already existant key");
+            curNode = curNode.getChild(node.key);
             return;
         }
         else{
-            curNode.addChild(node.key, node.value);
+            curNode = curNode.addChild(node.key, node.value);
         }
     }
 
+/**
+* builds a savetree based on an Isavable component to be used in parallel with
+* the primary tree.
+*/
+    public void buildSubtree(object saveData, ISavable component, GameObject componentParent){
+        curNode = root;
+        addSceneToTree();
+        addGameObjectPathToTree(componentParent);
+        addObjectDataToTree(saveData, component);
+    }
+
+/**
+*
+*/
+    private void addSceneToTree(){
+        string sceneID = SceneManager.GetActiveScene().name;
+        
+        SaveTreeNode sceneNode = new SaveTreeNode();
+        sceneNode.key = sceneID;
+
+        addNode(sceneNode);
+
+    }
+
+/***/
+    private void addObjectDataToTree(object saveData, ISavable component){
+
+        SaveTreeNode leafNode = new SaveTreeNode();
+        leafNode.key = component.GetType().Name;
+        leafNode.value = saveData;
+        addNode(leafNode);
+    }
+/**
+*
+*/
+    private void addGameObjectPathToTree(GameObject componentParent){
+        Stack<SaveTreeNode> nodeStack = new Stack<SaveTreeNode>();
+
+        GameObject go = componentParent;
+        while(go is not null){
+            SaveTreeNode newNode = new SaveTreeNode();
+            newNode.key = go.name;
+            nodeStack.Push(newNode);
+
+            if(go.transform.parent is not null){
+                go = go.transform.parent.gameObject;
+            }
+            else{ go = null; }
+        }
+
+        foreach(SaveTreeNode node in nodeStack){
+            addNode(node);
+        }
+    }
+
+/**
+* copies a parallel tree into the primary tree
+*/
     public void saveSubtree(SaveTree subtree){
         curNode = root;
         subtree.rerootParallelNode();
@@ -27,15 +94,21 @@ public class SaveTree : MonoBehaviour
         saveComponentValue(subtree);
     }
 
+/**
+* Updates the primary tree with any missing nodes in the parallel subtree.
+*/
     private void copyRemainingNodes(SaveTree subtree){
         SaveTreeNode nextNode = subtree.getParallelNode().getOnlyChild();
         while(nextNode is not null){
             addNode(nextNode);
-            curNode = nextNode;
             subtree.setParallelNode(nextNode.key);
+            nextNode = subtree.getParallelNode().getOnlyChild();
         }
     }
 
+/**
+* updates the value of a leaf node given a parallel tree.
+*/
     private void saveComponentValue(SaveTree subtree){
         curNode.value = getParallelNode().value;
     }
@@ -66,6 +139,9 @@ public class SaveTree : MonoBehaviour
 */
 private bool subtreesMatch(SaveTree subtree){
     string nextNode = subtree.getParallelNode().getOnlyChild().key;
+    if(nextNode is null){
+        return false;
+    }
     if(curNode.getChild(nextNode) is not null){
         return true;
     }
@@ -110,24 +186,24 @@ private bool subtreesMatch(SaveTree subtree){
     }
 
 /**
-* Function for debugging purposes, prints each row in the JSON save tree sequentially
+* Function for debugging purposes, prints each row in the save tree sequentially
 */
     public void printSaveTree(){
-        List<SaveTreeNode> currentRow = new List<SaveTreeNode>();
-        List<SaveTreeNode> nextRow = new List<SaveTreeNode>();
-        currentRow.Add(root);
+        List<SaveTreeNode> unvisitedNodes = new List<SaveTreeNode>();
+        unvisitedNodes.Add(root);
 
-        while(currentRow.Count > 0){
-            string line = "";
-            foreach(SaveTreeNode node in currentRow){
-                nextRow.AddRange(node.getAllChildren());
-                line = line + node.ToString();
+        Debug.Log("--------------------------------------------------------------\n");
+/*         while(unvisitedNodes.Count > 0){
+            Debug.Log(unvisitedNodes[0].ToString());
+            foreach(SaveTreeNode newNode in unvisitedNodes[0].getAllChildren()){
+                unvisitedNodes.Add(newNode);
             }
+            unvisitedNodes.RemoveAt(0);
+        } */
+        root.printAllDownstream();
 
-            currentRow = nextRow;
-            nextRow.Clear();
-            print(line);
-        }
+        Debug.Log("--------------------------------------------------------------\n");
+
     }
 
     public override string ToString(){
@@ -136,4 +212,5 @@ private bool subtreesMatch(SaveTree subtree){
     return "asdf";
     }
 
+}
 }

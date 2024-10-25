@@ -6,20 +6,24 @@ public class SaveTreeNode
 {
     public string key {get; set;}
     public object value {get; set;}
-    private Dictionary<string, SaveTreeNode> children;
+    private Dictionary<string, SaveTreeNode> children = new Dictionary<string, SaveTreeNode>();
 
     public SaveTreeNode addChild(string newKey, object newValue){
         if(children.ContainsKey(newKey)){
-            Debug.Log("Trying to add an object to the save file with an already existant ID.");
             return children[newKey];
-        }
-        
+        }  
+
         SaveTreeNode child = new SaveTreeNode();
+
         child.key = newKey;
         child.value = newValue;
-        children[newKey] = child;
 
+        children.Add(newKey, child);
         return children[newKey];
+    }
+
+    public SaveTreeNode addChild(SaveTreeNode newNode){
+        return this.addChild(newNode.key, newNode.value);
     }
 
     public SaveTreeNode getChild(string key){
@@ -44,6 +48,9 @@ public class SaveTreeNode
     }
 
     public override string ToString(){
+        if(this.value is null){
+            return key + ": ";
+        }
         return key + " : " + value.ToString();
     }
 
@@ -53,5 +60,13 @@ public class SaveTreeNode
             childrenToReturn.Add(child);
         }
         return childrenToReturn;
+    }
+
+    public void printAllDownstream(){
+        Debug.Log(this.ToString());
+        foreach(string child in children.Keys){
+            children[child].printAllDownstream();
+        }
+
     }
 }
