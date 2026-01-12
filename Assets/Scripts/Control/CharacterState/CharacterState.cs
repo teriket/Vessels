@@ -10,7 +10,6 @@ ChangeLog:      V 0.1.0 -- 5/12/2024
                     --This class now holds how intense gravity should be
                     --this class now holds the player velocity vector
                     --renamed characterstate to gravitystate
-                    --Dev time: 3 Hours
 */
 namespace Control{
 public class CharacterState : MonoBehaviour

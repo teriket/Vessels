@@ -81,7 +81,7 @@ public class CharacterMover : MonoBehaviour
             move = move.normalized;
             controller.Move(move * Time.deltaTime * playerSpeed);
             gameObject.transform.forward = move;
-            reducePlayerVelocity();
+            //reducePlayerVelocity();
         }
         else playerSpeed = defaultPlayerSpeed;
         controller.Move(characterState.playerVelocity * Time.deltaTime);
@@ -146,7 +146,7 @@ public class CharacterMover : MonoBehaviour
     }
 
 /// <summary>
-/// Slows down the players velocity if they hold down a movement key.
+/// Slows down the players velocity if they hold down a movement key in the air.
 /// </summary>
     private void reducePlayerVelocity(){
         characterState.playerVelocity = new Vector3(characterState.playerVelocity.x * overrideVelocityMultiplier, characterState.playerVelocity.y, characterState.playerVelocity.z * overrideVelocityMultiplier);

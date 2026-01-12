@@ -57,7 +57,7 @@ public class BuildCoreGameObjects : MonoBehaviour
         initTransform = GameObject.FindObjectsOfType<LevelLoader>()[0].transform.GetChild(0).transform;
         foreach(GameObject go in buildObjects){
             GameObject restoreObject = GameObject.Find(go.name);
-            restoreObject ??= Instantiate(go);
+            restoreObject ??= Instantiate(go); //instantiate if null
             restoreObject.name = go.name;
         }
     }

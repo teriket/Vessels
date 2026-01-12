@@ -19,16 +19,21 @@ public class MovingPlatform : MonoBehaviour
     [SerializeField]float xAmplitude;
     [SerializeField]float zAmplitude;
     [SerializeField]float speed;
+    Rigidbody rb;
+    void Start()
+        {
+            rb = GetComponent<Rigidbody>();
+        }
 
-    // Update is called once per frame
-    void Update()
+    void FixedUpdate()
     {
-        transform.position = new Vector3(
+        rb.MovePosition(new Vector3(
             transform.position.x + xAmplitude * Mathf.Sin(Time.time) * Time.deltaTime * speed,
             transform.position.y + yAmplitude * Mathf.Sin(Time.time) * Time.deltaTime * speed,
             transform.position.z + zAmplitude * Mathf.Sin(Time.time) * Time.deltaTime * speed
-
-        );
+        ));
     }
+
+    
 }
 }

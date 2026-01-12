@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using Debugging;
-using System.Text.Json;
+//using System.Text.Json;
 
 namespace Saving{
     /// <summary>
@@ -11,7 +11,7 @@ namespace Saving{
     /// </summary>
 public class LevelSaver : MonoBehaviour
 {
-    SaveWriter saveWriter = SaveWriter.getInstance();
+    //SaveWriter saveWriter = SaveWriter.getInstance();
 
     void Start(){
         save();
@@ -19,12 +19,12 @@ public class LevelSaver : MonoBehaviour
 
     public void save(){
         Scene activeScene = SceneManager.GetActiveScene();
-        saveWriter.initSaveTree();
+        //saveWriter.initSaveTree();
 
         foreach (GameObject obj in activeScene.GetRootGameObjects()){
             saveObjectAndAllChildren(obj);
         }
-        saveWriter.pushChangesToSaveFile();
+        //saveWriter.pushChangesToSaveFile();
     }
 
     private void saveObjectAndAllChildren(GameObject gameObject){
@@ -36,7 +36,7 @@ public class LevelSaver : MonoBehaviour
 
     private void writeChangesToSaveTree(GameObject obj){
         foreach(ISavable component in obj.GetComponents<ISavable>()){
-            saveWriter.buildSaveTree(component.save(), component, obj);
+            //saveWriter.buildSaveTree(component.save(), component, obj);
         }
     }
 
