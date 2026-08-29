@@ -1,0 +1,100 @@
+------------------------
+SUMMARY
+------------------------
+A 3d puzzle-platformer-collectathon game with a grapple hook
+central mechanic.  Attacks are technically possible, but not
+emphasized, and combat is not difficult
+
+
+
+------------------------
+LAST SESSION
+------------------------
+
+
+
+
+------------------------
+UP NEXT
+------------------------
+- Decomplexify the camera controller so it doesn't have 2
+follow objects.  Make it lerp to a target position rather
+than set its transform position.  This will reduce camera
+jitter.   Give the camera the option to be first person or 
+third person, and create more complex camera animation 
+effects for cinematic moments in gameplay. A main goal should 
+be to make the camera code modular and reusable for future 
+games I build
+
+- Refactor and simplify character movement scripts.  Should
+account for moving platforms, slippery surfaces(?), and
+multiple movement modes (running, water skating, etc.).
+Create a setting for allowing movement midair vs. not for
+gameplay testing.
+
+- Make level loading more seamless by either having a large
+level that disables objects not in a bounding box, or by
+having asynchronous multi-level loading enabled
+
+- Saving / loading.  Currently uses a tree structure that
+should be refactored into a dictionary
+
+- 
+
+
+
+------------------------
+BACKLOG
+------------------------
+
+                PRINCIPAL GAMEPLAY FEATURES
+- saving and loading
+- grapple hook hit to interact with object
+- active dialog
+- passive dialog
+- collectathon objects and their associated doors
+- event system
+- map system with pins
+- journal
+- input mapping
+- game menus
+    |- escape menu
+    |- settings menu (audio, graphics, controlls)
+    |- journal menu
+- Havent played for a while? Refresher
+
+
+                ZONE: Achalon, the new kingdom
+``` solar punk japanese themed level with moving trollies,          ```
+``` windmills, rotating cranes, and a mix of urban oceanside        ```
+``` design and mountainous regions, with hints of the old kingdom   ```
+``` architecture                                                    ```
+
+
+                    ZONE: The third kingdom 
+``` Rainy, mountainous region with mysterious ruins featuring       ```
+``` aquaducts, stony pipes, direlect power stations, flooded areas  ```
+``` and subterranian cities                                         ```
+
+
+                    ZONE: the deep jungles
+``` A dense, magical jungle saturated with magic, forcing life to   ```
+``` grow in perpituity.  Features dark jungles lit by bioluminescent```
+``` plants, massive cannopies, many mushishi spirits, plant-based   ```
+``` movement mechanics (spring-loaded leaves, etc.) and an ascent   ```
+``` up the canopy to reach the elven city, with magic quarts spire  ```
+
+
+
+                UPGRADES
+- double grapple
+- further grapple
+- faster grapple recharge
+- higher jumps
+- double jumps
+- explosive
+- water skating
+
+------------------------
+COMPLETED FEATURES
+------------------------
