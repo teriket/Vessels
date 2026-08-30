@@ -34,125 +34,138 @@ ChangeLog:
                     --Player now accelerates while they run, up to a maximum speed
 */
 
-namespace Control{
-public class CharacterMover : MonoBehaviour
+namespace Control
 {
-    private CharacterState characterState;
-    private CharacterController controller;
-    private CharacterState owner;                  
-    [SerializeField]float defaultPlayerSpeed = 2.0f;
-    [SerializeField]float maxPlayerSpeed;
-    [SerializeField]float playerAcceleration;
-    private float playerSpeed;           
-    private CameraController cameraController;          
-    private Vector3 floorNormalDir;
-    [SerializeField][Range(0,1)] float slideAngle;
-    [SerializeField][Range(0, 10)]float slideSpeedMultiplier;
-    [SerializeField]float overrideVelocityMultiplier;
-    private IEnumerator coroutine;
-
-
-/// <summary>
-/// Cache the camera controller and the character controller
-/// </summary>
-    public void Start()
+    public class CharacterMover : MonoBehaviour
     {
-        characterState = this.GetComponent<CharacterState>();
-        controller = gameObject.GetComponent<CharacterController>();
-        cameraController = this.transform.parent.GetComponentInChildren<CameraController>();
-    }
+        private CharacterState characterState;
+        private CharacterController controller;
+        private CharacterState owner;
+        [SerializeField] float defaultPlayerSpeed = 2.0f;
+        [SerializeField] float maxPlayerSpeed;
+        [SerializeField] float playerAcceleration;
+        private float playerSpeed;
+        private CameraControllerDEFUNCT cameraController;
+        private Vector3 floorNormalDir;
+        [SerializeField][Range(0, 1)] float slideAngle;
+        [SerializeField][Range(0, 10)] float slideSpeedMultiplier;
+        [SerializeField] float overrideVelocityMultiplier;
+        private IEnumerator coroutine;
 
-/// <summary>
-/// Checks the player for collisions with the ground.  Moves the player if they press
-/// the movement buttons.  The player jumps if they press the jump key.
-/// </summary>
-    public void Update()
-    {
-        Vector3 move = new Vector3();
 
-        if(GetComponent<MouseContext>().getMouseContext() != MouseContext.mouseContext.menu){
-            move = forwardMovement() + strafe();
-        }
-
-        if (move != Vector3.zero)
+        /// <summary>
+        /// Cache the camera controller and the character controller
+        /// </summary>
+        public void Start()
         {
-            playerSpeed += playerAcceleration * Time.deltaTime;
-            playerSpeed = Mathf.Clamp(playerSpeed, defaultPlayerSpeed, maxPlayerSpeed);
-            move = move.normalized;
-            controller.Move(move * Time.deltaTime * playerSpeed);
-            gameObject.transform.forward = move;
-            //reducePlayerVelocity();
+            characterState = this.GetComponent<CharacterState>();
+            controller = gameObject.GetComponent<CharacterController>();
+            cameraController = this.transform.parent.GetComponentInChildren<CameraControllerDEFUNCT>();
         }
-        else playerSpeed = defaultPlayerSpeed;
-        controller.Move(characterState.playerVelocity * Time.deltaTime);
-    }
 
-/// <summary>
-/// Returns a forward or backward vector if the player presses the forward or backward
-/// movement keys.
-/// </summary>
-/// <returns>Direction vector the player should be moved.</returns>
-    private Vector3 forwardMovement(){
-        Vector3 move = new Vector3();
-        move.x = (float)Math.Sin(cameraController.getTheta()) * -1;
-        move.y = 0;
-        move.z = (float)Math.Cos(cameraController.getTheta()) * -1;
-        move = move * forwardBackwardMovementInput();
-        return move;
-    }
+        /// <summary>
+        /// Checks the player for collisions with the ground.  Moves the player if they press
+        /// the movement buttons.  The player jumps if they press the jump key.
+        /// </summary>
+        public void Update()
+        {
+            Vector3 move = new Vector3();
 
-/// <summary>
-/// A helper function that determines whether the player is pressing the forward or
-/// backward key.
-/// </summary>
-/// <returns>1 if the player presses forward, -1 if the player presses backward</returns>
-    private int forwardBackwardMovementInput(){
-        if(Input.GetKey("w")){
-            return 1;
+            if (GetComponent<MouseContext>().getMouseContext() != MouseContext.mouseContext.menu)
+            {
+                move = forwardMovement() + strafe();
+            }
+
+            if (move != Vector3.zero)
+            {
+                playerSpeed += playerAcceleration * Time.deltaTime;
+                playerSpeed = Mathf.Clamp(playerSpeed, defaultPlayerSpeed, maxPlayerSpeed);
+                move = move.normalized;
+                controller.Move(move * Time.deltaTime * playerSpeed);
+                gameObject.transform.forward = move;
+                reducePlayerVelocity();
+            }
+            else playerSpeed = defaultPlayerSpeed;
+            controller.Move(characterState.playerVelocity * Time.deltaTime);
         }
-        if(Input.GetKey("s")){
-            return -1;
-        }
-        return 0;
-    }
 
-/// <summary>
-/// Returns a vector perpindicular to the forward plane of the character for strafing
-/// left and right.
-/// </summary>
-/// <returns>a perpindicular vector to the forward direction.</returns>
-    private Vector3 strafe(){
-        Vector3 move = new Vector3();
-        if(Input.GetKey("d")){
-            move.x = (float)Math.Cos(cameraController.getTheta()) * -1;
+        /// <summary>
+        /// Returns a forward or backward vector if the player presses the forward or backward
+        /// movement keys.
+        /// </summary>
+        /// <returns>Direction vector the player should be moved.</returns>
+        private Vector3 forwardMovement()
+        {
+            Vector3 move = new Vector3();
+            move.x = (float)Math.Sin(cameraController.getTheta()) * -1;
             move.y = 0;
-            move.z = (float)Math.Sin(cameraController.getTheta());
+            move.z = (float)Math.Cos(cameraController.getTheta()) * -1;
+            move = move * forwardBackwardMovementInput();
             return move;
-        } 
-        if(Input.GetKey("a")){
-            move.x = (float)Math.Cos(cameraController.getTheta());
-            move.y = 0;
-            move.z = (float)Math.Sin(cameraController.getTheta()) * -1;
-            return move;
-        } 
-        return move;
-    }
-
-/// <summary>
-/// Zeroes the players movement
-/// </summary>
-    public void zeroVelocity(){
-        characterState.playerVelocity = new Vector3(0, 0, 0);
-    }
-
-/// <summary>
-/// Slows down the players velocity if they hold down a movement key in the air.
-/// </summary>
-    private void reducePlayerVelocity(){
-        characterState.playerVelocity = new Vector3(characterState.playerVelocity.x * overrideVelocityMultiplier, characterState.playerVelocity.y, characterState.playerVelocity.z * overrideVelocityMultiplier);
-        if(characterState.playerVelocity.magnitude < 0.1f){
-            zeroVelocity();
         }
-    }
 
-}}
+        /// <summary>
+        /// A helper function that determines whether the player is pressing the forward or
+        /// backward key.
+        /// </summary>
+        /// <returns>1 if the player presses forward, -1 if the player presses backward</returns>
+        private int forwardBackwardMovementInput()
+        {
+            if (Input.GetKey("w"))
+            {
+                return 1;
+            }
+            if (Input.GetKey("s"))
+            {
+                return -1;
+            }
+            return 0;
+        }
+
+        /// <summary>
+        /// Returns a vector perpindicular to the forward plane of the character for strafing
+        /// left and right.
+        /// </summary>
+        /// <returns>a perpindicular vector to the forward direction.</returns>
+        private Vector3 strafe()
+        {
+            Vector3 move = new Vector3();
+            if (Input.GetKey("d"))
+            {
+                move.x = (float)Math.Cos(cameraController.getTheta()) * -1;
+                move.y = 0;
+                move.z = (float)Math.Sin(cameraController.getTheta());
+                return move;
+            }
+            if (Input.GetKey("a"))
+            {
+                move.x = (float)Math.Cos(cameraController.getTheta());
+                move.y = 0;
+                move.z = (float)Math.Sin(cameraController.getTheta()) * -1;
+                return move;
+            }
+            return move;
+        }
+
+        /// <summary>
+        /// Zeroes the players movement
+        /// </summary>
+        public void zeroVelocity()
+        {
+            characterState.playerVelocity = new Vector3(0, 0, 0);
+        }
+
+        /// <summary>
+        /// Slows down the players velocity if they hold down a movement key in the air.
+        /// </summary>
+        private void reducePlayerVelocity()
+        {
+            characterState.playerVelocity = new Vector3(characterState.playerVelocity.x * overrideVelocityMultiplier, characterState.playerVelocity.y, characterState.playerVelocity.z * overrideVelocityMultiplier);
+            if (characterState.playerVelocity.magnitude < 0.1f)
+            {
+                zeroVelocity();
+            }
+        }
+
+    }
+}
