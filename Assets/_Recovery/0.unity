@@ -4056,7 +4056,6 @@ GameObject:
   - component: {fileID: 710149051}
   - component: {fileID: 710149050}
   - component: {fileID: 710149049}
-  - component: {fileID: 710149052}
   m_Layer: 0
   m_Name: PlayerModel
   m_TagString: Player
@@ -4159,18 +4158,6 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 710149047}
   m_Mesh: {fileID: 10208, guid: 0000000000000000e000000000000000, type: 0}
---- !u!114 &710149052
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 710149047}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9b72cf27ca3b0f84e8f782ac681b2b3e, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::DataStructures.AutoRegisterGameObjectToIoC
 --- !u!1 &717160014
 GameObject:
   m_ObjectHideFlags: 0
@@ -4585,7 +4572,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   cameraMode: 0
   cameraBehaviourModifiers: 0
-  followSpeed: 0.242
+  followSpeed: 1
 --- !u!81 &820483568
 AudioListener:
   m_ObjectHideFlags: 0

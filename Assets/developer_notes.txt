@@ -10,8 +10,31 @@ emphasized, and combat is not difficult
 ------------------------
 LAST SESSION
 ------------------------
+Started work on refactoring the player prefab.  There is now an 
+IoC container for the player object to help manage dependencies.
+The camera is refactored into a camera manager, which uses the command
+pattern to create camera target scripts.  The camera manager repositions
+the camera, while the camera target determines where the camera should
+look at and reposition.  Detecting mouse movements was extracted
+out of the camera controller and into its own script, which implements
+a mouse controller interface.  This interface will help support
+switching between controller and keyboard in the future.
 
+- Next session, the player movement controller should be refactored
+so it doesn't depend on the camera, it should use the IoC container,
+and movement should be mildly refactored to support snapping to 
+moving platforms.  This will be a good opportunity to fix gravity
+bugs
 
+- as a todo, the camera controller currently caches a reference
+to the mouseManager.  It should propbably not cache a reference
+in the case the player switches from keyboard to controller mid-gameplay,
+which could result in a null pointer exception.  Should probably
+implement an input manager.  Also, the mouseManager will likely need
+to keep track of the mouse context, so clicks arent detected inside menus, etc.
+
+- Another todo, camera pan and zoom speed are stored as local variables.
+That should be refactored to be player preferences.
 
 
 ------------------------
@@ -83,17 +106,35 @@ BACKLOG
 ``` plants, massive cannopies, many mushishi spirits, plant-based   ```
 ``` movement mechanics (spring-loaded leaves, etc.) and an ascent   ```
 ``` up the canopy to reach the elven city, with magic quarts spire  ```
+ 
+ - Entities
+    |- Shrieker: glowing eyes that hides in the dark before floating
+    |           out to capture the player
+    |- Launch Leaf: standing ontop of launches the player upwards
 
 
+                UPGRADE IDEAS
+- Grapple Hook
+    |- double grapple charges
+    |- further grapple
+    |- faster grapple recharge
+    |- grapple launch (push off the ground)
+    |- grapple grabber (grab items from a distance)
+    |- power terminals
 
-                UPGRADES
-- double grapple
-- further grapple
-- faster grapple recharge
-- higher jumps
-- double jumps
-- explosive
-- water skating
+- Movement
+    |- higher jumps
+    |- double jumps
+    |- Movement Speed
+    |- Wall jumps
+    |- Wall Running
+
+-magic
+    |- explosive
+    |- water skating
+
+- Attributes
+    |- Health
 
 ------------------------
 COMPLETED FEATURES
