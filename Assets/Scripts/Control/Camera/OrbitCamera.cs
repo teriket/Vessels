@@ -1,6 +1,5 @@
 using System.Collections;
 using System.Collections.Generic;
-using Control;
 using UnityEngine;
 using Development;
 using DataStructures;
@@ -18,7 +17,7 @@ namespace Control
         private IIoCComponent<ICameraTransform> ioc => this;
 
         private GameObject player;
-        private IMouseManager mouseManager;
+        private IInputDevice mouseManager;
 
         private const string PLAYER_IOC_GAMEOBJECT_NAME = "PlayerModel";
 
@@ -26,8 +25,11 @@ namespace Control
         private float theta;
         private const float CAMERA_LOCK_PROTECTION_FACTOR = 0.1f;
 
-        [SerializeField] float panSpeed = 1f;
-        [SerializeField] float zoomSensitivity = 2;
+        private SettingsManager settings;
+        private Bindable<float> panSpeed;
+        private Bindable<float> zoomSensitivity;
+        // [SerializeField] float panSpeed = 1f;
+        // [SerializeField] float zoomSensitivity = 2;
 
         [SerializeField] private float minArmLength = 0;
         [SerializeField] private float maxArmLength = 10;
@@ -40,7 +42,8 @@ namespace Control
         {
             ioc.InitializeIoCContainer(this);
 
-            mouseManager = iocContainer.RequestComponent<IMouseManager>();
+            settings = iocContainer.RequestComponent<SettingsManager>();
+            mouseManager = iocContainer.RequestComponent<IInputDevice>();
             player = iocContainer.RequestObject(PLAYER_IOC_GAMEOBJECT_NAME);
 
             if (mouseManager == null)
@@ -51,6 +54,17 @@ namespace Control
             if (player == null)
             {
                 Development.Logger.Warn("Could not find a player object to follow at object startup");
+            }
+
+            if (settings == null)
+            {
+                Development.Logger.CriticalMessage("Could not find an instance of the settings manager");
+                return;
+            }
+            else
+            {
+                panSpeed = settings.Register(Strings.SETTING_CAMERA_MOVE_SENSITIVITY, 2f);
+                zoomSensitivity = settings.Register(Strings.SETTING_CAMERA_ZOOM_SENSITIVITY, 2f);
             }
         }
 
@@ -67,7 +81,12 @@ namespace Control
                 return new Vector3();
             }
 
-            if (mouseManager == null && !ioc.TryRepairComponentReference<IMouseManager>(out mouseManager))
+            if (mouseManager == null && !ioc.TryRepairComponentReference<IInputDevice>(out mouseManager))
+            {
+                return new Vector3();
+            }
+
+            if (panSpeed == null || zoomSensitivity == null)
             {
                 return new Vector3();
             }
@@ -105,12 +124,12 @@ namespace Control
             const int INVERTED_CONTROLS_CONVERSION_FACTOR = -1;
 
             // calculates the angle of the camera about the sphere
-            theta = mouseManager.GetMouseDelta().x * panSpeed / Mathf.Rad2Deg * INVERTED_CONTROLS_CONVERSION_FACTOR;
-            phi = mouseManager.GetMouseDelta().y * panSpeed / Mathf.Rad2Deg;
+            theta = mouseManager.GetMouseDelta().x * panSpeed.Value / Mathf.Rad2Deg * INVERTED_CONTROLS_CONVERSION_FACTOR;
+            phi = mouseManager.GetMouseDelta().y * panSpeed.Value / Mathf.Rad2Deg;
             phi = Mathf.Clamp(phi, minPhi, maxPhi);
 
             // set the radial distance the camera is from the spheres origin
-            armLength = armLength + (mouseManager.GetScroll() * zoomSensitivity * INVERTED_CONTROLS_CONVERSION_FACTOR);
+            armLength = armLength + (mouseManager.GetScroll() * zoomSensitivity.Value * INVERTED_CONTROLS_CONVERSION_FACTOR);
             armLength = Mathf.Clamp(armLength, minArmLength, maxArmLength);
 
             // spherical coordinates -> cartesian coordinates

@@ -3,7 +3,7 @@ using DataStructures;
 
 namespace Control
 {
-    public class MouseManager : MonoBehaviour, IMouseManager, IIoCComponent<IMouseManager>
+    public class MouseManager : MonoBehaviour, IInputDevice, IIoCComponent<IInputDevice>
     {
         Vector3 initialMousePosition;
         // a reference to the actual iocContainer that the helper interface requires
@@ -12,7 +12,7 @@ namespace Control
         // faster access to helper methods from the IoCComponent interface.  Also includes wrapper
         // functions for the IoCContainer itself with built-in safety checks, so IoC operations should
         // be defaulted to this variable instead of the iocContainer variable.
-        IIoCComponent<IMouseManager> ioc => this;
+        IIoCComponent<IInputDevice> ioc => this;
 
         void Awake()
         {

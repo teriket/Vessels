@@ -62,7 +62,8 @@ having asynchronous multi-level loading enabled
 - Saving / loading.  Currently uses a tree structure that
 should be refactored into a dictionary
 
-- 
+- LocalizableString, stores player-facing strings in .csv with
+columns for different language localizations
 
 
 
@@ -75,7 +76,7 @@ BACKLOG
 - grapple hook hit to interact with object
 - active dialog
 - passive dialog
-- collectathon objects and their associated doors
+- collectathon objects and their associated doors?
 - event system
 - map system with pins
 - journal
@@ -85,6 +86,7 @@ BACKLOG
     |- settings menu (audio, graphics, controlls)
     |- journal menu
 - Havent played for a while? Refresher
+- Localizable Strings
 
 
                 ZONE: Achalon, the new kingdom
@@ -120,7 +122,9 @@ BACKLOG
     |- faster grapple recharge
     |- grapple launch (push off the ground)
     |- grapple grabber (grab items from a distance)
-    |- power terminals
+    |- power terminals - electricity
+    |- force grapple - break objects and push over enemies
+
 
 - Movement
     |- higher jumps
@@ -128,10 +132,13 @@ BACKLOG
     |- Movement Speed
     |- Wall jumps
     |- Wall Running
+    |- Moving across steeper terrain
 
 -magic
     |- explosive
     |- water skating
+    |- Sonic boom: aim a target reticle to charge and then boom to target location
+    |- speaking to animals
 
 - Attributes
     |- Health

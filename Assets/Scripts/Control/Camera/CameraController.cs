@@ -4,6 +4,7 @@ using Control;
 using UnityEngine;
 using Development;
 using System;
+using DataStructures;
 
 public class CameraController : MonoBehaviour
 {
@@ -11,7 +12,9 @@ public class CameraController : MonoBehaviour
     public enum CameraMode
     {
         ORBIT,
-        FIRST_PERSON
+        FIRST_PERSON,
+        TWO_D_FOLLOW,
+        TWO_D_PUSH_AHEAD
     }
 
     [Flags]
@@ -65,4 +68,5 @@ public class CameraController : MonoBehaviour
         // look towards the point in space the cameraTarget specifies
         transform.LookAt(optimisticCameraTarget.GetLookAtPosition());
     }
+
 }

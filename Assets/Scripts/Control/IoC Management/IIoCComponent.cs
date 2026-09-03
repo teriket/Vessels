@@ -10,12 +10,21 @@ namespace DataStructures
     /// method when they are destroyed.
     /// 
     /// A proper setup looks like this:
-    /// public class MyClass : IIoCComponent<TypeToRegisterAs>{
-    /// IoCContainer iocContainer {get; set;}
-    /// private IIoCComponent<TypeToRegisterAs> ioc => this;
+    /// <code>
+    /// public class MyClass : IIoCComponent&lt;TypeToRegisterAs&gt;{
+    ///     IoCContainer iocContainer {get; set;}
+    ///     private IIoCComponent&lt;TypeToRegisterAs&gt; ioc =&gt; this;
     /// 
-    /// void SomeMethod(){ioc.MethodCallFromHere()}
+    /// void Start(){
+    ///     ioc.InitializeIoCContainer(this);
+    ///     ioc.MethodCallFromHere()
+    ///     }
+    /// 
+    /// void OnDestroy(){
+    ///     ioc.ExecuteCleanup();
     /// }
+    /// }
+    /// </code>
     /// </summary>
     public interface IIoCComponent<T>
     {
