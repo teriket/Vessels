@@ -3,22 +3,20 @@ SUMMARY
 ------------------------
 A 3d puzzle-platformer-collectathon game with a grapple hook
 central mechanic.  Attacks are technically possible, but not
-emphasized, and combat is not difficult
-
-
+emphasized, and combat is not difficult.  Exploration and puzzle
+solving are more emphasized
 
 ------------------------
 LAST SESSION
 ------------------------
-Started work on refactoring the player prefab.  There is now an 
-IoC container for the player object to help manage dependencies.
-The camera is refactored into a camera manager, which uses the command
-pattern to create camera target scripts.  The camera manager repositions
-the camera, while the camera target determines where the camera should
-look at and reposition.  Detecting mouse movements was extracted
-out of the camera controller and into its own script, which implements
-a mouse controller interface.  This interface will help support
-switching between controller and keyboard in the future.
+- Created a settings manager with data bindings.  I've saved a setting
+to set the camera speed to zero and haven't changed it back yet.  Next,
+I need to create a menu that displays all settings to be modified.  before
+that, I need to correctly setup inputs so users can navigate the menu
+without affecting gameplay.  The settings menu renderer settings should probably
+be stored in a config file rather than done programattically.  TBD.
+
+- Created a global Strings folder that is used for internal message passing.
 
 - Next session, the player movement controller should be refactored
 so it doesn't depend on the camera, it should use the IoC container,
@@ -26,24 +24,11 @@ and movement should be mildly refactored to support snapping to
 moving platforms.  This will be a good opportunity to fix gravity
 bugs
 
-- as a todo, the camera controller currently caches a reference
-to the mouseManager.  It should propbably not cache a reference
-in the case the player switches from keyboard to controller mid-gameplay,
-which could result in a null pointer exception.  Should probably
-implement an input manager.  Also, the mouseManager will likely need
-to keep track of the mouse context, so clicks arent detected inside menus, etc.
-
-- Another todo, camera pan and zoom speed are stored as local variables.
-That should be refactored to be player preferences.
-
 
 ------------------------
 UP NEXT
 ------------------------
-- Decomplexify the camera controller so it doesn't have 2
-follow objects.  Make it lerp to a target position rather
-than set its transform position.  This will reduce camera
-jitter.   Give the camera the option to be first person or 
+- Give the camera the option to be first person or 
 third person, and create more complex camera animation 
 effects for cinematic moments in gameplay. A main goal should 
 be to make the camera code modular and reusable for future 
@@ -55,8 +40,7 @@ multiple movement modes (running, water skating, etc.).
 Create a setting for allowing movement midair vs. not for
 gameplay testing.
 
-- Make level loading more seamless by either having a large
-level that disables objects not in a bounding box, or by
+- Make level loading more seamless by
 having asynchronous multi-level loading enabled
 
 - Saving / loading.  Currently uses a tree structure that
@@ -87,6 +71,13 @@ BACKLOG
     |- journal menu
 - Havent played for a while? Refresher
 - Localizable Strings
+- Camera
+    |- Shy camera Features
+    |- cinematic camera takeover
+        |- Event for cinematic start / end
+        |- Bezier track for moving camera
+        |- camera angles for dialog?
+        |- secondary cameras vs primary camera takeover
 
 
                 ZONE: Achalon, the new kingdom
@@ -142,7 +133,3 @@ BACKLOG
 
 - Attributes
     |- Health
-
-------------------------
-COMPLETED FEATURES
-------------------------

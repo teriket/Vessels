@@ -1,0 +1,21 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fd311e574288d594ea8fed7d23e73d79, type: 3}
+  m_Name: FlipCameraHorizontalAxis
+  m_EditorClassIdentifier: Assembly-CSharp::DataStructures.Settings.IntBindingSO
+  defaultValue: 1
+  label:
+    id: d453520d-4414-4e1d-a456-4e3520323a56
+    value: Invert Horizontal Axis
+    displayValue: Invert Horizontal Axis
+  saveKey: FlipCameraHorizontalAxis
+  acceptableValues: 1
